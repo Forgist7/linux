@@ -57,3 +57,17 @@ jobs:
           echo 'DevDeploy...' >> file.log
           echo '---DevDeploy complete---'
           cat file.log
+          
+  prod:
+    runs-on: ubuntu-latest
+    needs: test2
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Deploy to Prod
+        run: |
+          echo '---ProdDeploy started---'
+          echo 'ProdDeploy...' >> file.log
+          echo '---ProdDeploy complete---'
+          cat file.log
