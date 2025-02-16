@@ -1,0 +1,52 @@
+#GitLab CI/CD
+
+stages:
+  - stage_build
+  - stage_test
+  - stage_deploy
+
+variables:
+  OWNER_NAME   : Forgist
+  CICD_VERSION : v1.0
+  LOG_FILE_NAME: file.log
+
+build_job:
+    stage: stage_build
+    script:
+        - echo '---Build started---'
+        - echo 'Building...' >> $LOG_FILE_NAME
+        - echo '---Build complete---'
+    artifacts:
+      paths:
+        - $LOG_FILE_NAME
+
+test_job1:
+    stage: stage_test
+    script:
+        - echo '---Test1 started---'
+        - echo '1st Testing...' >> $LOG_FILE_NAME
+        - echo '---Test1 complete---'
+    artifacts:
+      paths:
+        - $LOG_FILE_NAME
+
+test_job2:
+    stage: stage_test
+    needs:
+      - job: test_job1
+    script:
+        - echo '---Test2 started---'
+        - echo '2nd Testing...' >> $LOG_FILE_NAME
+        - echo '---Test2 complete---'
+    artifacts:
+      paths:
+        - $LOG_FILE_NAME
+
+deploy_to_dev_job:
+    stage: stage_deploy
+    script: 
+        - echo '---DevDeploy started---'
+        - echo 'DevDeploy...' >> $LOG_FILE_NAME
+        - echo '---DevDeploy complete---'
+        - echo cat $LOG_FILE_NAME
+
