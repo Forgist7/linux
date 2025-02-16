@@ -1,52 +1,59 @@
-#GitLab CI/CD
+name: GitHub Actions CI/CD
 
-stages:
-  - stage_build
-  - stage_test
-  - stage_deploy
+on:
+  push:
+    branches:
+      - main
 
-variables:
-  OWNER_NAME   : Forgist
-  CICD_VERSION : v1.0
-  LOG_FILE_NAME: file.log
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-build_job:
-    stage: stage_build
-    script:
-        - echo '---Build started---'
-        - echo 'Building...' >> $LOG_FILE_NAME
-        - echo '---Build complete---'
-    artifacts:
-      paths:
-        - $LOG_FILE_NAME
+      - name: Build
+        run: |
+          echo '---Build started---'
+          echo 'Building...' >> file.log
+          echo '---Build complete---'
 
-test_job1:
-    stage: stage_test
-    script:
-        - echo '---Test1 started---'
-        - echo '1st Testing...' >> $LOG_FILE_NAME
-        - echo '---Test1 complete---'
-    artifacts:
-      paths:
-        - $LOG_FILE_NAME
+  test1:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-test_job2:
-    stage: stage_test
-    needs:
-      - job: test_job1
-    script:
-        - echo '---Test2 started---'
-        - echo '2nd Testing...' >> $LOG_FILE_NAME
-        - echo '---Test2 complete---'
-    artifacts:
-      paths:
-        - $LOG_FILE_NAME
+      - name: Test1
+        run: |
+          echo '---Test1 started---'
+          echo '1st Testing...' >> file.log
+          echo '---Test1 complete---'
 
-deploy_to_dev_job:
-    stage: stage_deploy
-    script: 
-        - echo '---DevDeploy started---'
-        - echo 'DevDeploy...' >> $LOG_FILE_NAME
-        - echo '---DevDeploy complete---'
-        - echo cat $LOG_FILE_NAME
+  test2:
+    runs-on: ubuntu-latest
+    needs: test1
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
+      - name: Test2
+        run: |
+          echo '---Test2 started---'
+          echo '2nd Testing...' >> file.log
+          echo '---Test2 complete---'
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test2
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Deploy to Dev
+        run: |
+          echo '---DevDeploy started---'
+          echo 'DevDeploy...' >> file.log
+          echo '---DevDeploy complete---'
+          cat file.log
