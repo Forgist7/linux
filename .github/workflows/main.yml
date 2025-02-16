@@ -1,5 +1,8 @@
 name: GitHub Actions CI/CD
 
+env:
+  LOG_FILE: file.log
+
 on:
   push:
     branches:
@@ -9,65 +12,50 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
       - name: Build
         run: |
           echo '---Build started---'
-          echo 'Building...' >> file.log
+          echo 'Building...' >> ${{ env.LOG_FILE }}
           echo '---Build complete---'
 
   test1:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
       - name: Test1
         run: |
           echo '---Test1 started---'
-          echo '1st Testing...' >> file.log
+          echo '1st Testing...' >> ${{ env.LOG_FILE }}
           echo '---Test1 complete---'
 
   test2:
     runs-on: ubuntu-latest
     needs: test1
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
       - name: Test2
         run: |
           echo '---Test2 started---'
-          echo '2nd Testing...' >> file.log
+          echo '2nd Testing...' >> ${{ env.LOG_FILE }}
           echo '---Test2 complete---'
 
   deploy:
     runs-on: ubuntu-latest
     needs: test2
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
       - name: Deploy to Dev
         run: |
           echo '---DevDeploy started---'
-          echo 'DevDeploy...' >> file.log
+          echo 'DevDeploy...' >> ${{ env.LOG_FILE }}
           echo '---DevDeploy complete---'
-          cat file.log
+          cat ${{ env.LOG_FILE }}
           
   prod:
     runs-on: ubuntu-latest
-    needs: test2
+    needs: deploy
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
       - name: Deploy to Prod
         run: |
           echo '---ProdDeploy started---'
-          echo 'ProdDeploy...' >> file.log
+          echo 'ProdDeploy...' >> ${{ env.LOG_FILE }}
           echo '---ProdDeploy complete---'
-          cat file.log
+          cat ${{ env.LOG_FILE }}
